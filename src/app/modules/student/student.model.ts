@@ -29,17 +29,18 @@ const localGuardianSchema = new Schema<ILocalGuardian>({
 });
 
 const studentSchema = new Schema<IStudent>({
-  id: { type: String , required: true, unique: true},
+  id: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   name: {
     type: userNameSchema,
     required: true,
   },
   gender: {
     type: String,
-    enum: ['male', 'female'],
+    enum: ['male', 'female', 'other'],
     required: true,
   },
-  dateOfBirth: { type: Date },
+  dateOfBirth: { type: String },
   email: { type: String, required: true, unique: true },
   contactNo: { type: String, required: true },
   emergencyContactNo: { type: String, required: true },
@@ -64,6 +65,7 @@ const studentSchema = new Schema<IStudent>({
     enum: ['active', 'blocked'],
     required: true,
   },
+  isDeleted: { type: Boolean, default: false },
 });
 
 export const StudentModel = model<IStudent>('Student', studentSchema);
