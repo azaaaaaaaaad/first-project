@@ -5,15 +5,30 @@ import { OrderModel } from './order.model';
 const createOrderIntoDB = async (orderData: TOrder) => {
   const { product, quantity } = orderData;
 
+  // Find the product in the inventory
   const productInInventory = await StationaryModel.findById(product);
 
-  if (productInInventory?.quantity < quantity) {
-    throw new Error('Insufficient Stock Available');
+  // Check if the product exists
+  if (!productInInventory) {
+    throw new Error('Product not found.');
   }
+
+  // Ensure the product has a defined and valid quantity
+  if (typeof productInInventory.quantity !== 'number') {
+    throw new Error('Product quantity is not properly defined.');
+  }
+
+  // Check if there is sufficient stock available
+  if (productInInventory.quantity < quantity) {
+    throw new Error('Insufficient stock available.');
+  }
+
+  // Create the order
   const order = await OrderModel.create(orderData);
 
-  productInInventory?.quantity -= quantity;
-  productInInventory?.inStock = productInInventory.quantity > 0;
+  // Update the inventory: reduce quantity and adjust inStock status
+  productInInventory.quantity -= quantity;
+  productInInventory.inStock = productInInventory.quantity > 0;
 
   // Save the updated product inventory
   await productInInventory.save();
