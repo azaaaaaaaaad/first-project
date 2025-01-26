@@ -1,4 +1,3 @@
-import { IStudent } from './student.interface';
 import { StudentModel } from './student.model';
 
 const getAllStudentsFromDb = async () => {
