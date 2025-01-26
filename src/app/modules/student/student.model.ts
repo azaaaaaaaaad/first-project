@@ -5,8 +5,6 @@ import {
   IStudent,
   IUserName,
 } from './student.interface';
-import bcrypt from 'bcryptjs';
-import config from '../../config';
 
 const userNameSchema = new Schema<IUserName>({
   firstName: { type: String, required: true },
@@ -33,7 +31,12 @@ const localGuardianSchema = new Schema<ILocalGuardian>({
 const studentSchema = new Schema<IStudent>(
   {
     id: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      unique: true,
+      ref: 'User',
+    },
     name: {
       type: userNameSchema,
       required: true,
@@ -63,11 +66,6 @@ const studentSchema = new Schema<IStudent>(
       required: true,
     },
     profileImg: { type: String },
-    isActive: {
-      type: String,
-      enum: ['active', 'blocked'],
-      required: true,
-    },
     isDeleted: { type: Boolean, default: false },
   },
   {
@@ -79,22 +77,7 @@ studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
 
-//pre save middleware hook for hashing password
-studentSchema.pre('save', async function (next) {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const user = this;
-  user.password = await bcrypt.hash(
-    user.password,
-    Number(config.bcrypt_salt_rounds),
-  );
-  next();
-});
 
-//post save middleware hook for removing password from response
-studentSchema.post('save', (doc, next) => {
-  doc.password = '';
-  next();
-});
 
 //Query MiddleWare to exclude deleted documents
 studentSchema.pre('find', function (next) {
