@@ -9,6 +9,7 @@ const userSchema = new Schema<TUser>(
     id: {
       type: String,
       required: true,
+      unique: true,
     },
     password: {
       type: String,
@@ -39,13 +40,16 @@ const userSchema = new Schema<TUser>(
 
 userSchema.pre('save', async function (next) {
   const user = this;
-  user.password = await bcrypt.hash(user.password, Number(config.bcrypt_salt_rounds))
-  next()
-})
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_rounds),
+  );
+  next();
+});
 
-userSchema.post('save', async function (doc, next){
-  doc.password=''
-  next()
-})
+userSchema.post('save', async function (doc, next) {
+  doc.password = '';
+  next();
+});
 
 export const UserModel = model<TUser>('User', userSchema);
