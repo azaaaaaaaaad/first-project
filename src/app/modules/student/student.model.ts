@@ -66,6 +66,11 @@ const studentSchema = new Schema<IStudent>(
       required: true,
     },
     profileImg: { type: String },
+    admissionSemester: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: 'AcademicSemester',
+    },
     isDeleted: { type: Boolean, default: false },
   },
   {
@@ -76,8 +81,6 @@ const studentSchema = new Schema<IStudent>(
 studentSchema.virtual('fullName').get(function () {
   return `${this.name.firstName} ${this.name.middleName} ${this.name.lastName}`;
 });
-
-
 
 //Query MiddleWare to exclude deleted documents
 studentSchema.pre('find', function (next) {

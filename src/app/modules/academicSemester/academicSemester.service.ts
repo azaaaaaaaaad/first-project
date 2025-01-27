@@ -23,11 +23,22 @@ const getSingleAcademicSemesterFromDB = async (id: string) => {
   return result;
 };
 
-const updateSingleAcademicsemesterIntoDB = async (id: string, updateData:Partial<TAcademicSemester>) => {
+const updateSingleAcademicsemesterIntoDB = async (
+  id: string,
+  updateData: Partial<TAcademicSemester>,
+) => {
+  if (
+    updateData.name &&
+    updateData.code &&
+    academicSemesterNameCodeMapper[updateData.name] !== updateData.code
+  ) {
+    throw new Error('Invalid Semester Code');
+  }
+
   const result = await AcademicSemesterModel.findByIdAndUpdate(
     id,
     { $set: updateData },
-    {new:true},
+    { new: true },
   );
   return result;
 };
