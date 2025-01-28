@@ -5,8 +5,6 @@ import {
   IStudent,
   IUserName,
 } from './student.interface';
-import { AppError } from '../../errors/AppError';
-import httpStatus from 'http-status';
 
 const userNameSchema = new Schema<IUserName>({
   firstName: { type: String, required: true },
