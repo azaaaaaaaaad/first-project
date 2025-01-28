@@ -11,7 +11,6 @@ import { UserModel } from './user.model';
 import generatedStudentId from './user.utils';
 import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
-import { Session } from 'inspector/promises';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -63,6 +62,8 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   } catch (error: any) {
     await session.abortTransaction();
     await session.endSession();
+    // console.log(error);
+
     throw new Error('Failed to create student');
   }
 };
