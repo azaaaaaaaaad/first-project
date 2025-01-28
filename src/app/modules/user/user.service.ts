@@ -8,9 +8,9 @@ import { TStudent } from '../student/student.interface';
 import { StudentModel } from '../student/student.model';
 import { TUser } from './user.interface';
 import { UserModel } from './user.model';
-import generatedStudentId from './user.utils';
 import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
+import { generateStudentId } from './user.utils';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -34,7 +34,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
   try {
     session.startTransaction();
     //set  generated id
-    userData.id = await generatedStudentId(admissionSemester);
+    userData.id = await generateStudentId(admissionSemester);
 
     // create a user (transaction-1)
     const newUser = await UserModel.create([userData], { session }); // array
@@ -64,7 +64,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     await session.endSession();
     // console.log(error);
 
-    throw new Error('Failed to create student');
+    throw new Error(error);
   }
 };
 export const UserServices = {

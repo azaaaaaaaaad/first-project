@@ -1,5 +1,7 @@
-import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
-import { UserModel } from './user.model';
+// year semesterCode 4digit number
+
+import { TAcademicSemester } from "../academicSemester/academicSemester.interface";
+import { UserModel } from "./user.model";
 
 const findLastStudentId = async () => {
   const lastStudent = await UserModel.findOne(
@@ -16,31 +18,33 @@ const findLastStudentId = async () => {
     })
     .lean();
 
-  return lastStudent?.id ? lastStudent?.id.substring(6) : undefined;
+  //2030 01 0001
+  return lastStudent?.id ? lastStudent.id : undefined;
 };
 
-//generatedId
-const generatedStudentId = async (payload: TAcademicSemester) => {
-  let currentId = (0).toString();
+export const generateStudentId = async (payload: TAcademicSemester) => {
+  // first time 0000
+  //0001  => 1
+  let currentId = (0).toString(); // 0000 by deafult
 
   const lastStudentId = await findLastStudentId();
-  const lastStudentSemesterCode = lastStudentId?.substring(4, 6);
-  const lastStudentYear = lastStudentId?.substring(0, 4);
+  // 2030 01 0001
+  const lastStudentSemesterCode = lastStudentId?.substring(4, 6); //01;
+  const lastStudentYear = lastStudentId?.substring(0, 4); // 2030
   const currentSemesterCode = payload.code;
-  const currentYearCode = payload.year;
+  const currentYear = payload.year;
 
   if (
     lastStudentId &&
     lastStudentSemesterCode === currentSemesterCode &&
-    lastStudentYear === currentYearCode
+    lastStudentYear === currentYear
   ) {
-    currentId = lastStudentId.substring(6);
+    currentId = lastStudentId.substring(6); // 00001
   }
 
   let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
 
   incrementId = `${payload.year}${payload.code}${incrementId}`;
+
   return incrementId;
 };
-
-export default generatedStudentId;
