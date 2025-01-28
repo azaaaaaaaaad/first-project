@@ -1,6 +1,6 @@
 import { FilterQuery, Query } from 'mongoose';
 
-export class QueryBuilder<T> {
+class QueryBuilder<T> {
   public modelQuery: Query<T[], T>;
   public query: Record<string, unknown>;
 
@@ -12,7 +12,7 @@ export class QueryBuilder<T> {
   search(searchableFields: string[]) {
     const searchTerm = this?.query?.searchTerm;
     if (searchTerm) {
-      this.modelQuery = this.modelQuery.find({
+      this.modelQuery = this.modelQuery?.find({
         $or: searchableFields.map(
           (field) =>
             ({
@@ -31,13 +31,13 @@ export class QueryBuilder<T> {
 
     excludeFields.forEach((el) => delete queryObj[el]);
 
-    this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
+    this.modelQuery = this.modelQuery?.find(queryObj as FilterQuery<T>);
 
     return this;
   }
   sort() {
     const sort = this?.query?.sort || '-createdAt';
-    this.modelQuery = this.modelQuery.sort(sort as string);
+    this.modelQuery = this?.modelQuery?.sort(sort as string);
 
     return this;
   }
@@ -46,15 +46,17 @@ export class QueryBuilder<T> {
     const limit = Number(this?.query?.limit) || 10;
     const skip = (page - 1) * limit;
 
-    this.modelQuery = this.modelQuery.skip(skip).limit(limit);
+    this.modelQuery = this.modelQuery?.skip(skip)?.limit(limit);
     return this;
   }
   fields() {
     const fields =
-      (this?.query?.fields as string).split(',').join(' ') || '-__v';
+      (this?.query?.fields as string)?.split(',')?.join(' ') || '-__v';
 
-    this.modelQuery = this.modelQuery.select(fields);
+    this.modelQuery = this?.modelQuery?.select(fields);
 
     return this;
   }
 }
+
+export default QueryBuilder;
