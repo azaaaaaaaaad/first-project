@@ -4,7 +4,7 @@
 import mongoose from 'mongoose';
 import config from '../../config';
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
-import { IStudent } from '../student/student.interface';
+import { TStudent } from '../student/student.interface';
 import { StudentModel } from '../student/student.model';
 import { TUser } from './user.interface';
 import { UserModel } from './user.model';
@@ -13,7 +13,7 @@ import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { Session } from 'inspector/promises';
 
-const createStudentIntoDB = async (password: string, payload: IStudent) => {
+const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
   const userData: Partial<TUser> = {};
 

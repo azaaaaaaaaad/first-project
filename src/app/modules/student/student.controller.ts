@@ -4,8 +4,6 @@ import sendResponse from '../../utils/sendResonse';
 import httpStatus from 'http-status';
 import catchAsync from '../../utils/catchAsync';
 
-
-
 const getStudents = catchAsync(async (req, res) => {
   const result = await StudentServices.getAllStudentsFromDb();
   sendResponse(res, {
@@ -39,7 +37,8 @@ const deleteAStudent = catchAsync(async (req, res) => {
 });
 const updateAStudent = catchAsync(async (req, res) => {
   const { studentId } = req.params;
-  const result = await StudentServices.updateAStudentFromDb(studentId);
+  const { student } = req.body;
+  const result = await StudentServices.updateAStudentFromDb(studentId, student);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
