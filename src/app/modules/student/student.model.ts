@@ -5,6 +5,8 @@ import {
   IStudent,
   IUserName,
 } from './student.interface';
+import { AppError } from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 const userNameSchema = new Schema<IUserName>({
   firstName: { type: String, required: true },
@@ -103,5 +105,7 @@ studentSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { isDeleted: { $ne: true } } });
   next();
 });
+
+
 
 export const StudentModel = model<IStudent>('Student', studentSchema);
