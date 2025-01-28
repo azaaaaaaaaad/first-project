@@ -31,7 +31,6 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
 
   excludeFields.forEach((el) => delete queryObj[el]);
 
-  console.log({query}, {queryObj});
   
 
   const filterQuery = searchQuery.find(queryObj).populate([
