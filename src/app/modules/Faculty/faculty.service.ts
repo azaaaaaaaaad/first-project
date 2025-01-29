@@ -2,11 +2,11 @@
 import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import QueryBuilder from '../../builder/QueryBuilder';
-import AppError from '../../errors/AppError';
-import { User } from '../user/user.model';
 import { FacultySearchableFields } from './faculty.constant';
 import { TFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
+import { AppError } from '../../errors/AppError';
+import { UserModel } from '../user/user.model';
 
 const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultyQuery = new QueryBuilder(
@@ -68,7 +68,7 @@ const deleteFacultyFromDB = async (id: string) => {
     // get user _id from deletedFaculty
     const userId = deletedFaculty.user;
 
-    const deletedUser = await User.findByIdAndUpdate(
+    const deletedUser = await UserModel.findByIdAndUpdate(
       userId,
       { isDeleted: true },
       { new: true, session },
