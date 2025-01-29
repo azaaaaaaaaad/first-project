@@ -11,9 +11,9 @@ import { UserModel } from './user.model';
 import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { generateFacultyId, generateStudentId } from './user.utils';
-import { TFaculty } from '../faculty/faculty.interface';
 import { AcademicDepartmentModel } from '../academicDepartment/academicDepartment.model';
-import { Faculty } from '../faculty/faculty.model';
+import { Faculty } from '../Faculty/faculty.model';
+import { TFaculty } from '../Faculty/faculty.interface';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
