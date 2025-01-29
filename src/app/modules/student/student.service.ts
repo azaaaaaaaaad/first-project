@@ -12,74 +12,6 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { studentSearchableFields } from './student.constant';
 
 const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
-  // const queryObj = { ...query };
-
-  // const studentSearchableField = ['email', 'name.firstName', 'presentAddress'];
-
-  // let searchTerm = '';
-
-  // if (query?.searchTerm) {
-  //   searchTerm = query?.searchTerm as string;
-  // }
-
-  // const searchQuery = StudentModel.find({
-  //   $or: studentSearchableField.map((field) => ({
-  //     [field]: { $regex: searchTerm, $options: 'i' },
-  //   })),
-  // });
-
-  // //filtering
-  // const excludeFields = ['searchTerm', 'sort', 'limit', 'page','fields'];
-
-  // excludeFields.forEach((el) => delete queryObj[el]);
-
-  // const filterQuery = searchQuery.find(queryObj).populate([
-  //   {
-  //     path: 'admissionSemester',
-  //   },
-  //   {
-  //     path: 'academicDepartment',
-  //     populate: {
-  //       path: 'academicFaculty',
-  //     },
-  //   },
-  // ]);
-
-  // let sort = '-createdAt';
-
-  // if (query.sort) {
-  //   sort = query.sort as string;
-  // }
-
-  // const sortQuery = filterQuery.sort();
-
-  // let page = 1;
-  // let limit = 1;
-  // let skip = 0;
-
-  // if (query.limit) {
-  //   limit = query.limit as number;
-  // }
-
-  // if (query.page) {
-  //   page = query.page as number;
-  //   skip = (page - 1) * limit;
-  // }
-
-  // const paginateQUery = sortQuery.skip(skip);
-
-  // const limitQuery =  paginateQUery.limit(limit);
-
-  // let fields ='-__v'
-
-  // if (query.fields) {
-  //   fields = (query.fields as string).split(',').join(' ')
-  // }
-
-  // const fieldQuery = await limitQuery.select(fields)
-
-  // return fieldQuery;
-
   const studentQuery = new QueryBuilder(
     StudentModel.find().populate([
       {
@@ -105,7 +37,7 @@ const getAllStudentsFromDb = async (query: Record<string, unknown>) => {
 
 const getAStudentFromDb = async (id: string) => {
   // const result = await StudentModel.findOne({ id });
-  const result = await StudentModel.findOne({ id }).populate([
+  const result = await StudentModel.findById(id).populate([
     {
       path: 'admissionSemester',
     },
