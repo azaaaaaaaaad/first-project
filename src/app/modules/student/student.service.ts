@@ -65,8 +65,8 @@ const deleteAStudentFromDb = async (id: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
     }
 
-    const deletedUser = await UserModel.findOneAndUpdate(
-      { id },
+    const deletedUser = await UserModel.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       { new: true, session },
     );
@@ -109,11 +109,10 @@ const updateAStudentFromDb = async (id: string, payload: Partial<TStudent>) => {
     }
   }
 
-  const result = await StudentModel.findOneAndUpdate(
-    { id },
-    modifiedUpdatedData,
-    { new: true, runValidators: true },
-  );
+  const result = await StudentModel.findByIdAndUpdate(id, modifiedUpdatedData, {
+    new: true,
+    runValidators: true,
+  });
   return result;
 };
 
