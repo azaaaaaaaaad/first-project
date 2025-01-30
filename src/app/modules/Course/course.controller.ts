@@ -50,7 +50,7 @@ const deleteSingleCourse = catchAsync(async (req, res) => {
 const updateCourse = catchAsync(async (req, res) => {
   const { id } = req.params;
   const result =
-    await CourseServices.(
+    await CourseServices.updateCourseIntoDB(
       id,
       req.body,
     );
