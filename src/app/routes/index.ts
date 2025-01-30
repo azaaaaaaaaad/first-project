@@ -42,6 +42,11 @@ const moduleRoutes = [
     path: '/courses',
     route: CourseRoutes,
   },
+
+  {
+    path: '/semesters',
+    route: AcademicSemesterRoutes,
+  },
 ];
 
 moduleRoutes.map((route) => router.use(route.path, route.route));
