@@ -1,6 +1,7 @@
 import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { SemesterRegistrationValidations } from './semisterRegistration.validation';
+import { SemesterRegistrationController } from './semisterRegistration.controller';
 
 const router = express.Router();
 
@@ -20,14 +21,9 @@ router.get(
 router.patch(
   '/:id',
   validateRequest(
-    SemesterRegistrationValidations.upadateSemesterRegistrationValidationSchema,
+    SemesterRegistrationValidations.updateSemesterRegistrationValidationSchema,
   ),
   SemesterRegistrationController.updateSemesterRegistration,
-);
-
-router.get(
-  '/:id',
-  SemesterRegistrationController.getSingleSemesterRegistration,
 );
 
 router.delete(
