@@ -18,12 +18,8 @@ const createOfferedCourseValidationSchema = z.object({
 
 const updateOfferedCourseValidationSchema = z.object({
   body: z.object({
-    semesterRegistration: z.string().optional(),
-    academicFaculty: z.string().optional(),
-    academicDepartment: z.string().optional(),
-    course: z.string().optional(),
+  
     faculty: z.string().optional(),
-    section: z.number().optional(),
     maxCapacity: z.number().optional(),
     days: z.array(z.enum([...Days] as [string, ...string[]])).optional(),
     startTime: z.string().optional(),
@@ -31,7 +27,7 @@ const updateOfferedCourseValidationSchema = z.object({
   }),
 });
 
-export const OfferedCourseVAlidation = {
+export const OfferedCourseValidations = {
   createOfferedCourseValidationSchema,
   updateOfferedCourseValidationSchema,
 };
