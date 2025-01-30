@@ -112,5 +112,5 @@ export const SemesterRegistrationService = {
   getAllSemesterRegistrationsFromDB,
   getSingleSemesterRegistrationsFromDB,
   updateSemesterRegistrationIntoDB,
-  deleteSemesterRegistrationFromDB,
+//   deleteSemesterRegistrationFromDB,
 };
