@@ -7,7 +7,7 @@ import { AcademicSemesterModel } from '../academicSemester/academicSemester.mode
 import { TStudent } from '../student/student.interface';
 import { StudentModel } from '../student/student.model';
 import { TUser } from './user.interface';
-import { UserModel } from './user.model';
+import { User } from './user.model';
 import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
 import { generateFacultyId, generateStudentId } from './user.utils';
@@ -40,7 +40,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     userData.id = await generateStudentId(admissionSemester);
 
     // create a user (transaction-1)
-    const newUser = await UserModel.create([userData], { session }); // array
+    const newUser = await User.create([userData], { session }); // array
 
     //create a student
     if (!newUser.length) {
@@ -96,7 +96,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     userData.id = await generateFacultyId();
 
     // create a user (transaction-1)
-    const newUser = await UserModel.create([userData], { session }); // array
+    const newUser = await User.create([userData], { session }); // array
 
     //create a faculty
     if (!newUser.length) {

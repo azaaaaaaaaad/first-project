@@ -1,10 +1,10 @@
 // year semesterCode 4digit number
 
 import { TAcademicSemester } from '../academicSemester/academicSemester.interface';
-import { UserModel } from './user.model';
+import { User } from './user.model';
 
 const findLastStudentId = async () => {
-  const lastStudent = await UserModel.findOne(
+  const lastStudent = await User.findOne(
     {
       role: 'student',
     },
@@ -51,7 +51,7 @@ export const generateStudentId = async (payload: TAcademicSemester) => {
 
 //faculty
 export const findLastFacultyID = async () => {
-  const lastFaculty = await UserModel.findOne(
+  const lastFaculty = await User.findOne(
     {
       role: 'faculty',
     },
@@ -83,7 +83,7 @@ export const generateFacultyId = async () => {
 
 //admin
 export const findLastAdminId = async () => {
-  const lastAdmin = await UserModel.findOne(
+  const lastAdmin = await User.findOne(
     {
       role: 'admin',
     },
@@ -100,14 +100,14 @@ export const findLastAdminId = async () => {
   return lastAdmin?.id ? lastAdmin?.id?.substring(2) : undefined;
 };
 
-export const generatedAdminId =async() => {
-  let currentId = (0).toString()
-  const lastAdminId = await findLastAdminId()
+export const generatedAdminId = async () => {
+  let currentId = (0).toString();
+  const lastAdminId = await findLastAdminId();
   if (lastAdminId) {
-    currentId = lastAdminId.substring(2)
+    currentId = lastAdminId.substring(2);
   }
 
-  let incrementId = (Number(currentId)+1).toString().padStart(4,'0')
-  incrementId = `A-${incrementId}`
-  return incrementId
-}
+  let incrementId = (Number(currentId) + 1).toString().padStart(4, '0');
+  incrementId = `A-${incrementId}`;
+  return incrementId;
+};

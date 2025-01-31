@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import { StudentModel } from './student.model';
 import { AppError } from '../../errors/AppError';
 import httpStatus from 'http-status';
-import { UserModel } from '../user/user.model';
+import { User } from '../user/user.model';
 import { TStudent } from './student.interface';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { studentSearchableFields } from './student.constant';
@@ -65,9 +65,9 @@ const deleteAStudentFromDb = async (id: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete student');
     }
 
-    const userId = deletedStudent.user
+    const userId = deletedStudent.user;
 
-    const deletedUser = await UserModel.findByIdAndUpdate(
+    const deletedUser = await User.findByIdAndUpdate(
       userId,
       { isDeleted: true },
       { new: true, session },

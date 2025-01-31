@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-this-alias */
 import { model, Schema } from 'mongoose';
-import { TUser } from './user.interface';
+import { TUser, UserModel } from './user.interface';
 import bcrypt from 'bcryptjs';
 import config from '../../config';
 
-const userSchema = new Schema<TUser>(
+const userSchema = new Schema<TUser, UserModel>(
   {
     id: {
       type: String,
@@ -52,4 +52,4 @@ userSchema.post('save', async function (doc, next) {
   next();
 });
 
-export const UserModel = model<TUser>('User', userSchema);
+export const User = model<TUser, UserModel>('User', userSchema);
