@@ -3,8 +3,8 @@ import { User } from '../user/user.model';
 import { TLoginUser } from './auth.interface';
 import httpStatus from 'http-status';
 import bcrypt from 'bcryptjs';
-// import jwt, { JwtPayload } from 'jsonwebtoken';
-// import config from '../../config';
+import jwt from 'jsonwebtoken';
+import config from '../../config';
 
 // const loginUser = async (payload: TLoginUser) => {
 //   const isUserExist = await User.findOne({ id: payload?.id }).select(
@@ -77,7 +77,23 @@ const loginUser = async (payload: TLoginUser) => {
     throw new AppError(httpStatus.BAD_REQUEST, 'password did not matched');
   }
 
-  return {};
+  //create token and send it to user
+
+  const jwtPayload = {
+    userId: isUserExist?.id,
+    role: isUserExist?.role,
+  };
+
+  const accessToken = jwt.sign(jwtPayload, config.jwt_access_token as string, {
+    expiresIn: '10d',
+  });
+
+  const needsPasswordChange = isUserExist?.needsPasswordChange;
+
+  return {
+    accessToken,
+    needsPasswordChange,
+  };
 };
 
 // const changePassword = async (
