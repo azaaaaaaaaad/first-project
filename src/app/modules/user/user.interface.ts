@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+
 import { USER_ROLE } from './user.constant';
 
 export interface TUser {
@@ -11,8 +11,6 @@ export interface TUser {
   isDeleted: boolean;
 }
 
-export interface UserModel extends Model<TUser> {
-  myStatcMethod: number;
-}
+
 
 export type TUserRole = keyof typeof USER_ROLE;
