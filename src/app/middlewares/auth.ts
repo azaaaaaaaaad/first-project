@@ -7,12 +7,14 @@ import config from '../config';
 import { TUserRole } from '../modules/user/user.interface';
 import { User } from '../modules/user/user.model';
 
-const  isJWTIssuedBeforePasswordChanged = (passwordChangedTimestamp: Date, jwtIssuedTimeStamp: number) : boolean =>{
-  const passwordChangedTime = new Date (passwordChangedTimestamp).getTime()/1000
+export const isJWTIssuedBeforePasswordChanged = (
+  passwordChangedTimestamp: Date,
+  jwtIssuedTimeStamp: number,
+): boolean => {
+  const passwordChangedTime =
+    new Date(passwordChangedTimestamp).getTime() / 1000;
   return passwordChangedTime > jwtIssuedTimeStamp;
-}
-
-
+};
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -23,12 +25,12 @@ const auth = (...requiredRoles: TUserRole[]) => {
 
     const decoded = jwt.verify(
       token,
-      config.jwt_access_token as string,
+      config.jwt_access_secret as string,
     ) as JwtPayload;
 
     const { userId, role, iat } = decoded;
 
-    const isUserExist = await User.findOne({id:userId}).select('+password');
+    const isUserExist = await User.findOne({ id: userId }).select('+password');
     if (!isUserExist) {
       throw new AppError(httpStatus.NOT_FOUND, 'user not found');
     }
@@ -43,16 +45,19 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(httpStatus.FORBIDDEN, 'user is blocked');
     }
 
-
-       // Validate if JWT is still valid after password change
-       if (isUserExist.passwordChangedAt && iat) {
-        const isTokenExpired = isJWTIssuedBeforePasswordChanged(isUserExist.passwordChangedAt, iat);
-        if (isTokenExpired) {
-          throw new AppError(httpStatus.UNAUTHORIZED, 'Token expired due to password change');
-        }
+    // Validate if JWT is still valid after password change
+    if (isUserExist.passwordChangedAt && iat) {
+      const isTokenExpired = isJWTIssuedBeforePasswordChanged(
+        isUserExist.passwordChangedAt,
+        iat,
+      );
+      if (isTokenExpired) {
+        throw new AppError(
+          httpStatus.UNAUTHORIZED,
+          'Token expired due to password change',
+        );
       }
-
-   
+    }
 
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(httpStatus.UNAUTHORIZED, `you are not  authorized`);
