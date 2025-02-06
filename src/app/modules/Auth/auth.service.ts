@@ -8,6 +8,7 @@ import config from '../../config';
 import { createToken } from './auth.utils';
 import jwt from 'jsonwebtoken'
 import { isJWTIssuedBeforePasswordChanged } from '../../middlewares/auth';
+import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (payload: TLoginUser) => {
   const isUserExist = await User.findOne({ id: payload?.id }).select(
@@ -97,7 +98,7 @@ const changePassword = async (
   //hash new password
   const newHashedPasssword = await bcrypt.hash(
     payload?.newPassword,
-    Number(config.jwt_access_token),
+    Number(config.jwt_access_secret),
   );
 
   await User.findOneAndUpdate(
@@ -115,7 +116,7 @@ const changePassword = async (
   return null;
 };
 
-const refreshToken = async(token: string)=>{
+const refreshToken = async (token: string) => {
   const decoded = jwt.verify(
     token,
     config.jwt_refresh_secret as string,
@@ -151,9 +152,9 @@ const refreshToken = async(token: string)=>{
       );
     }
   }
-   //create token and send it to user
+  //create token and send it to user
 
-   const jwtPayload = {
+  const jwtPayload = {
     userId: isUserExist?.id,
     role: isUserExist?.role,
   };
@@ -169,8 +170,50 @@ const refreshToken = async(token: string)=>{
   }
 }
 
+const forgetPassword = async (userId: string) => {
+
+
+  const isUserExist = await User.findOne({ id: userId }).select('+password');
+  if (!isUserExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'user not found');
+  }
+
+  const isDeleted = isUserExist?.isDeleted;
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'user is deleted');
+  }
+
+  const userStatus = isUserExist?.status;
+  if (userStatus === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'user is blocked');
+  }
+
+
+  //create token and send it to user
+
+  const jwtPayload = {
+    userId: isUserExist?.id,
+    role: isUserExist?.role,
+  };
+
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '10m',
+  );
+
+
+  const resetUILink = `${config.reset_pass_ui_link}?id=${isUserExist.id}&token=${resetToken}`
+
+  sendEmail(isUserExist?.email, resetUILink)
+
+  console.log(resetUILink);
+
+}
+
 export const AuthServices = {
   loginUser,
   changePassword,
-  refreshToken
+  refreshToken,
+  forgetPassword
 };

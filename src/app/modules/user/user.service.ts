@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import mongoose from 'mongoose';
 import config from '../../config';
 import { AcademicSemesterModel } from '../academicSemester/academicSemester.model';
@@ -30,6 +29,8 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
 
   //set student role
   userData.role = 'student';
+  // set emial
+  userData.email = payload?.email
 
   //find academic semester info
   const admissionSemester = await AcademicSemesterModel.findById(
@@ -84,6 +85,8 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
 
   //set student role
   userData.role = 'faculty';
+  userData.email = payload?.email
+
 
   // find academic department info
   const academicDepartment = await AcademicDepartmentModel.findById(
@@ -140,6 +143,8 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
 
   //set student role
   userData.role = 'admin';
+  userData.email = payload?.email
+
 
   const session = await mongoose.startSession();
 
