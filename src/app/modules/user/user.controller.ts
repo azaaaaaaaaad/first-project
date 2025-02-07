@@ -6,14 +6,18 @@ import sendResponse from '../../utils/sendResonse';
 import catchAsync from '../../utils/catchAsync';
 
 const createStudent = catchAsync(async (req, res) => {
-  const { password, student: studentData } = req.body;
+  console.log(req.file, 'file');
+  console.log(req.body);
 
-  const result = await UserServices.createStudentIntoDB(password, studentData);
+
+  // const { password, student: studentData } = req.body;
+
+  // const result = await UserServices.createStudentIntoDB(password, studentData);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Student created successfully',
-    data: result,
+    data: null,
   });
 });
 
@@ -56,10 +60,23 @@ const getMe = catchAsync(async (req, res) => {
   });
 });
 
+const changeStatus = catchAsync(async (req, res) => {
+  const id = req.params.id
+  const result = await UserServices.changeStatus(id, req.body)
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'status changed successfully',
+    data: result,
+  });
+})
+
 
 export const UserControllers = {
   createStudent,
   createFaculty,
   createAdmin,
-  getMe
+  getMe,
+  changeStatus
 };

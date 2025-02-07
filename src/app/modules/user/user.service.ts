@@ -20,6 +20,7 @@ import { TFaculty } from '../Faculty/faculty.interface';
 import { TAdmin } from '../Admin/admin.interface';
 import { Admin } from '../Admin/admin.model';
 import { USER_ROLE } from './user.constant';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
 const createStudentIntoDB = async (password: string, payload: TStudent) => {
   // create a user object
@@ -47,6 +48,10 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     //set  generated id
     userData.id = await generateStudentId(admissionSemester);
 
+    //send image to cloudinary
+    sendImageToCloudinary()
+
+
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session }); // array
 
@@ -57,6 +62,7 @@ const createStudentIntoDB = async (password: string, payload: TStudent) => {
     // set id , _id as user
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id; //reference _id
+
 
     // create a student (transaction-2)
 
@@ -208,10 +214,16 @@ const getMe = async (userId: string, role: string) => {
   return result
 }
 
+const changeStatus = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true })
+  return result
+}
+
 
 export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
   createAdminIntoDB,
-  getMe
+  getMe,
+  changeStatus
 };
