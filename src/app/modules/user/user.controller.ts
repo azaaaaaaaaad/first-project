@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 
 import { UserServices } from './user.service';
 import httpStatus from 'http-status';
 import sendResponse from '../../utils/sendResonse';
 import catchAsync from '../../utils/catchAsync';
-import { AppError } from '../../errors/AppError';
 
 const createStudent = catchAsync(async (req, res) => {
   const { password, student: studentData } = req.body;
@@ -45,12 +44,9 @@ const createAdmin = catchAsync(async (req, res) => {
 
 const getMe = catchAsync(async (req, res) => {
 
-  const token = req.headers.authorization
-  if (!token) {
-    throw new AppError(httpStatus.NOT_FOUND, 'access token not found')
-  }
+  const { userId, role } = req.user
 
-  const result = await UserServices.getMe(token);
+  const result = await UserServices.getMe(userId, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
