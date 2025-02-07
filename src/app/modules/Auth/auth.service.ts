@@ -5,7 +5,7 @@ import httpStatus from 'http-status';
 import bcrypt from 'bcryptjs';
 import { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 import jwt from 'jsonwebtoken'
 import { isJWTIssuedBeforePasswordChanged } from '../../middlewares/auth';
 import { sendEmail } from '../../utils/sendEmail';
@@ -117,10 +117,7 @@ const changePassword = async (
 };
 
 const refreshToken = async (token: string) => {
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string)
 
   const { userId, iat } = decoded;
 
@@ -211,9 +208,54 @@ const forgetPassword = async (userId: string) => {
 
 }
 
+
+const resetPassword = async (payload: { id: string, newPassword: string }, token: string) => {
+
+  const isUserExist = await User.findOne({ id: payload.id }).select('+password');
+  if (!isUserExist) {
+    throw new AppError(httpStatus.NOT_FOUND, 'user not found');
+  }
+
+  const isDeleted = isUserExist?.isDeleted;
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'user is deleted');
+  }
+
+  const userStatus = isUserExist?.status;
+  if (userStatus === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'user is blocked');
+  }
+
+  const decoded = jwt.verify(
+    token,
+    config.jwt_access_secret as string,
+  ) as JwtPayload;
+
+
+
+  if (payload.id !== decoded.userId) {
+    console.log(payload.id, decoded.userId);
+    throw new AppError(httpStatus.FORBIDDEN, 'you are forbidden')
+  }
+
+  const newHashedPasssword = await bcrypt.hash(payload.newPassword, Number(config.bcrypt_salt_rounds))
+
+  await User.findOneAndUpdate({
+    id: decoded.userId,
+    role: decoded.role
+  }, {
+    password: newHashedPasssword,
+    needsPasswordChange: false,
+    passwordChangedAt: new Date()
+  })
+}
+
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
-  forgetPassword
+  forgetPassword,
+  resetPassword
 };
+
+
