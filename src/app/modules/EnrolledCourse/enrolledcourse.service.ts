@@ -66,7 +66,6 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
         }
     ])
 
-    const totalCredits = enrolledCourses.length > 0 ? enrolledCourses?.totalEnrolldedCredits : 0
 
 
     const semesterRegistration = await SemesterRegistration.findById(isOfferedCourseExists?.semesterRegistration).select('maxCredit')
