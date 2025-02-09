@@ -5,7 +5,8 @@ import httpStatus from 'http-status'
 
 const createEnrolledCourse = catchAsync(async (req, res) => {
 
-    const result = await EnrolledCourseServices.createEnrolledCourseIntoDB()
+    const userId = req.user.userId
+    const result = await EnrolledCourseServices.createEnrolledCourseIntoDB(userId, req.body)
 
     sendResponse(res, {
         statusCode: httpStatus.OK,
