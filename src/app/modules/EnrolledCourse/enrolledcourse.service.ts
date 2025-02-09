@@ -44,8 +44,29 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
                 semesterRegistration: isOfferedCourseExists?.semesterRegistration,
                 student: student?._id,
             }
+        },
+        {
+            $lookup: {
+                from: 'courses',
+                localField: 'course',
+                foreignField: '_id',
+                as: 'enrolledCourseData'
+            }
+        },
+        {
+            $unwind: '$enrolledCourseData'
+        },
+        {
+            $group: { _id: null, totalEnrolledCredits: { $sum: "$enrolledCourseData.credits" } }
+        }, {
+            $project: {
+                _id: 0,
+                totalEnrolledCredits: 1
+            }
         }
     ])
+
+    const totalCredits = enrolledCourses.length > 0 ? enrolledCourses?.totalEnrolldedCredits : 0
 
 
     const semesterRegistration = await SemesterRegistration.findById(isOfferedCourseExists?.semesterRegistration).select('maxCredit')
