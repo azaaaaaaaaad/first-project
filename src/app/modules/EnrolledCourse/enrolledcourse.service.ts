@@ -9,6 +9,7 @@ import { StudentModel } from "../student/student.model"
 import mongoose from "mongoose"
 import { SemesterRegistration } from "../semisterRegistration/semisterRegistration.model"
 import { Course } from "../Course/course.model"
+import { Faculty } from "../Faculty/faculty.model"
 
 const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCourse) => {
     const { offeredCourse } = payload
@@ -120,7 +121,7 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
 
 }
 
-const updateEnrolledCourseMarksIntoDB = async (payload: Partial<TEnrolledCourse>) => {
+const updateEnrolledCourseMarksIntoDB = async (facultyId: string, payload: Partial<TEnrolledCourse>) => {
 
     const { semesterRegistration, offeredCourse, student, courseMarks } = payload
 
@@ -136,8 +137,45 @@ const updateEnrolledCourseMarksIntoDB = async (payload: Partial<TEnrolledCourse>
 
     const isStudentExists = await StudentModel.findById(student)
     if (!isStudentExists) {
-        throw new AppError(httpStatus.NOT_FOUND, `student not found`)
+        throw new AppError(httpStatus.NOT_FOUND, `student  not found`)
     }
+
+    const faculty = await Faculty.findOne({ id: facultyId }, { _id: 1 })
+    if (!faculty) {
+        throw new AppError(httpStatus.NOT_FOUND, `faculty  not found`)
+    }
+
+
+    const isCourseBelongToFaculty = await EnrolledCourse.findOne({
+        semesterRegistration,
+        offeredCourse,
+        student,
+        faculty: faculty._id
+    })
+    if (!isCourseBelongToFaculty) {
+        throw new AppError(httpStatus.FORBIDDEN, `you are forbidden`)
+    }
+
+
+    const modifiedData: Record<string, unknown> = {
+        ...courseMarks
+    }
+
+    if (courseMarks && Object.keys(courseMarks).length) {
+        for (const [key, value] of Object.entries(courseMarks)) {
+            modifiedData[`courseMarks.${key}`] = value
+        }
+    }
+
+    const result = await EnrolledCourse.findById(
+        isCourseBelongToFaculty,
+        modifiedData,
+        {
+            new: true
+        }
+    )
+
+    return result
 
 
 
