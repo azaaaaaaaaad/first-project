@@ -1,6 +1,5 @@
-/* eslint-disable no-unused-vars */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AppError } from "../../errors/AppError"
 import { OfferedCourse } from "../OfferedCourse/OfferedCourse.model"
 import { TEnrolledCourse } from "./enrolledCourse.interface"
@@ -19,7 +18,7 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
         throw new AppError(httpStatus.NOT_FOUND, `offered course not found`)
     }
 
-    const course = await Course.findById(isOfferedCourseExists.course)
+
 
     if (isOfferedCourseExists.maxCapacity <= 0) {
         throw new AppError(httpStatus.BAD_REQUEST, `room is  full`)
@@ -40,6 +39,8 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
     if (isStudentAlreadyEnrolled) {
         throw new AppError(httpStatus.CONFLICT, `student is already enrolled`)
     }
+
+    const course = await Course.findById(isOfferedCourseExists.course)
 
     const semesterRegestration = await SemesterRegistration.findById(isOfferedCourseExists?.semesterRegistration, { maxCredit: 1 })
 
@@ -119,6 +120,31 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
 
 }
 
+const updateEnrolledCourseMarksIntoDB = async (payload: Partial<TEnrolledCourse>) => {
+
+    const { semesterRegistration, offeredCourse, student, courseMarks } = payload
+
+    const isSemesterRegistrationExists = await SemesterRegistration.findById(semesterRegistration)
+    if (!isSemesterRegistrationExists) {
+        throw new AppError(httpStatus.NOT_FOUND, `semester registration not found`)
+    }
+
+    const isOfferedCourseExists = await OfferedCourse.findById(offeredCourse)
+    if (!isOfferedCourseExists) {
+        throw new AppError(httpStatus.NOT_FOUND, `offered course not found`)
+    }
+
+    const isStudentExists = await StudentModel.findById(student)
+    if (!isStudentExists) {
+        throw new AppError(httpStatus.NOT_FOUND, `student not found`)
+    }
+
+
+
+
+}
+
 export const EnrolledCourseServices = {
-    createEnrolledCourseIntoDB
+    createEnrolledCourseIntoDB,
+    updateEnrolledCourseMarksIntoDB
 }
