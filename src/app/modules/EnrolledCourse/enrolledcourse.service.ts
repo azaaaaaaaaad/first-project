@@ -38,33 +38,33 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
         throw new AppError(httpStatus.CONFLICT, `student is already enrolled`)
     }
 
-    const enrolledCourses = await EnrolledCourse.aggregate([
-        {
-            $match: {
-                semesterRegistration: isOfferedCourseExists?.semesterRegistration,
-                student: student?._id,
-            }
-        },
-        {
-            $lookup: {
-                from: 'courses',
-                localField: 'course',
-                foreignField: '_id',
-                as: 'enrolledCourseData'
-            }
-        },
-        {
-            $unwind: '$enrolledCourseData'
-        },
-        {
-            $group: { _id: null, totalEnrolledCredits: { $sum: "$enrolledCourseData.credits" } }
-        }, {
-            $project: {
-                _id: 0,
-                totalEnrolledCredits: 1
-            }
-        }
-    ])
+    // const enrolledCourses = await EnrolledCourse.aggregate([
+    //     {
+    //         $match: {
+    //             semesterRegistration: isOfferedCourseExists?.semesterRegistration,
+    //             student: student?._id,
+    //         }
+    //     },
+    //     {
+    //         $lookup: {
+    //             from: 'courses',
+    //             localField: 'course',
+    //             foreignField: '_id',
+    //             as: 'enrolledCourseData'
+    //         }
+    //     },
+    //     {
+    //         $unwind: '$enrolledCourseData'
+    //     },
+    //     {
+    //         $group: { _id: null, totalEnrolledCredits: { $sum: "$enrolledCourseData.credits" } }
+    //     }, {
+    //         $project: {
+    //             _id: 0,
+    //             totalEnrolledCredits: 1
+    //         }
+    //     }
+    // ])
 
 
 
@@ -100,16 +100,12 @@ const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCour
 
         await session.commitTransaction()
         await session.endSession()
+        return result
     } catch (error: any) {
         await session.abortTransaction()
         await session.endSession()
         throw new Error(error)
     }
-
-
-
-
-    return result
 
 }
 
