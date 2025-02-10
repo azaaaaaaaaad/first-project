@@ -10,6 +10,7 @@ import mongoose from "mongoose"
 import { SemesterRegistration } from "../semisterRegistration/semisterRegistration.model"
 import { Course } from "../Course/course.model"
 import { Faculty } from "../Faculty/faculty.model"
+import { calculateGradeAndPoints } from "./enrolledCourse.utils"
 
 const createEnrolledCourseIntoDB = async (userId: string, payload: TEnrolledCourse) => {
     const { offeredCourse } = payload
@@ -169,6 +170,13 @@ const updateEnrolledCourseMarksIntoDB = async (facultyId: string, payload: Parti
             Math.ceil(classTest2 * 0.1) +
             Math.ceil(midTerm * 0.3) +
             Math.ceil(finalTerm * 0.5)
+
+        const result = calculateGradeAndPoints(totolMarks)
+
+        modifiedData.grade = result?.grade
+        modifiedData.gradePoints = result?.gradePoints
+        modifiedData.isCompleted = true
+
     }
 
 
