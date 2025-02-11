@@ -45,7 +45,7 @@ const createStudentIntoDB = async (file: any, password: string, payload: TStuden
   // find department
   const academinDepartment = await AcademicDepartmentModel.findById(payload?.academicDepartment)
   if (!academinDepartment) {
-    throw new Error('Academic Department Not Found');
+    throw new AppError(400, 'Academic Department Not Found');
   }
 
   payload.academicFaculty = academinDepartment?.academicFaculty
@@ -120,10 +120,14 @@ const createFacultyIntoDB = async (file: any, password: string, payload: TFacult
   const academicDepartment = await AcademicDepartmentModel.findById(
     payload.academicDepartment,
   );
+  console.log(academicDepartment);
+
 
   if (!academicDepartment) {
     throw new AppError(400, 'Academic department not found');
   }
+
+  payload.academicFaculty = academicDepartment?.academicFaculty
 
   const session = await mongoose.startSession();
 
@@ -228,12 +232,6 @@ const createAdminIntoDB = async (file: any, password: string, payload: TAdmin) =
 
 
 const getMe = async (userId: string, role: string) => {
-
-  // const decoded = verifyToken(token, config.jwt_access_secret as string)
-
-  // const { userId, role } = decoded
-
-  // console.log(userId, role);
 
   let result = null
 
