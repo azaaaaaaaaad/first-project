@@ -8,7 +8,7 @@ import fs from 'fs';
 
 
 
-export const sendImageToCloudinary = async (imageName: string, path: string): Promise<string> => {
+export const sendImageToCloudinary = async (imageName: string, path: string): Promise<Record<string, unknown>> => {
     try {
         cloudinary.config({
             cloud_name: config.cloudinary_cloud_name,
