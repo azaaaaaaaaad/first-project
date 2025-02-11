@@ -31,10 +31,21 @@ router.post(
     next()
   },
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-
   validateRequest(createFacultyValidationSchema),
   UserControllers.createFaculty,
 );
+
+// router.post(
+//   '/create-admin',
+//   upload.single('file'),
+//   (req: Request, res: Response, next: NextFunction) => {
+//     req.body = JSON.parse(req.body.data)
+//     next()
+//   },
+//   auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+//   validateRequest(AdminValidations.createAdminValidationSchema),
+//   UserControllers.createAdmin,
+// );
 
 router.post(
   '/create-admin',
@@ -47,6 +58,8 @@ router.post(
   validateRequest(AdminValidations.createAdminValidationSchema),
   UserControllers.createAdmin,
 );
+
+
 
 router.post('/change-status/:id',
   auth(USER_ROLE.superAdmin, USER_ROLE.admin),

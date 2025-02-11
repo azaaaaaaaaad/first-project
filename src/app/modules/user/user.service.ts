@@ -120,7 +120,6 @@ const createFacultyIntoDB = async (file: any, password: string, payload: TFacult
   const academicDepartment = await AcademicDepartmentModel.findById(
     payload.academicDepartment,
   );
-  console.log(academicDepartment);
 
 
   if (!academicDepartment) {
@@ -149,7 +148,7 @@ const createFacultyIntoDB = async (file: any, password: string, payload: TFacult
 
     //create a faculty
     if (!newUser.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create user');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create faculty');
     }
     // set id , _id as user
     payload.id = newUser[0].id;
